@@ -5,7 +5,7 @@
     <title>Document</title>
     <link rel="stylesheet" href="main.css">
     <script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script defer src="co-op.js"></script>
+    <script defer src="singleplayer.js"></script>
 </head>
 <body>
   <div class="container-fluid">
@@ -24,11 +24,8 @@
               <a class="nav-link active"  href="index.html">Home</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="singleplayer.html">Singleplayer</a>
+              <a class="nav-link" href="#">Link</a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="co-op.html">Co-op Multiplayer</a>
-              </li>
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 Dropdown
@@ -45,4 +42,41 @@
       </div>
     </nav>
   </div>
-  </html>
+  <!-- mt steht für margin top -->
+  <div class="row mt-5" >
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 mx-auto">
+          <div class="card">
+            <div class="card-body">
+              <button  type="button" class="btn btn-outline-primary col-11 offset-1  mt-1"id="Start">Quiz starten</button>
+              <p class="card-text d-none col-10 mx-auto" id="question">Wer bin ich</p>
+              <div class="container-fluid d-none" id="answercontainer">
+                <div class="row"> 
+                  <button  type="button" class="btn btn-outline-primary col-5  offset-1" id="Answer1">Primary</button>
+                  <button type="button" class="btn btn-outline-primary col-5 offset-1 "id="Answer2">Primary</button>
+                </div>
+                <div class="row"> 
+                  <button  type="button" class="btn btn-outline-primary col-5 offset-1 mt-1"id="Answer3">Primary</button>
+                  <button type="button" class="btn btn-outline-primary col-5 offset-1 mt-1"id="Answer4">Primary</button>
+                </div>
+                <div class="row"> 
+                  <button  type="button" class="btn btn-outline-primary col-11 offset-1  mt-1"id="Next">Next</button>
+                </div>
+                <div class="row d-none col-lg-10 mx-auto" id="explanationcontainer">
+                  <div id="explanation">Standarderklärung</div>
+                </div>
+              </div>
+              <!-- Ergebnis class d-none wird entfernt um sichtbar zu sein -->
+              <div class="d-none" id="result">
+                <h3>Ergebnis</h3>
+                <div id="resulttext"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>  
+  </div>
+</body>
+</html>

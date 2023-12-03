@@ -1,0 +1,87 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="main.css">
+    <script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script defer src="co-op.js"></script>
+</head>
+<body>
+  <div class="container-fluid">
+  <!-- Sticky top damit navi immer oben bleibt -->
+    <div class="row sticky-top">
+    <!-- Navbar von Bootstrap -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">IU-MindMaze</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link active"  href="index.html">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Link</a>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Dropdown
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <li><a class="dropdown-item" href="anmelden.html">Anmelden</a></li>
+                <li><a class="dropdown-item" href="#">Another action</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="#">Something else here</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </div>
+  <!-- mt steht für margin top -->
+  <div class="row mt-5" >
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 mx-auto">
+          <div class="card">
+            <div class="card-body">
+              <button  type="button" class="btn btn-outline-primary col-11 offset-1  mt-1"id="Start">Quiz starten</button>
+              <p class="card-text d-none col-10 mx-auto" id="question">Wer bin ich</p>
+              <div class="container-fluid d-none" id="answercontainer">
+                <div class="row"> 
+                  <button  type="button" class="btn btn-outline-primary col-5  offset-1" id="Answer1">Primary</button>
+                  <button type="button" class="btn btn-outline-primary col-5 offset-1 "id="Answer2">Primary</button>
+                </div>
+                <div class="row"> 
+                  <button  type="button" class="btn btn-outline-primary col-5 offset-1 mt-1"id="Answer3">Primary</button>
+                  <button type="button" class="btn btn-outline-primary col-5 offset-1 mt-1"id="Answer4">Primary</button>
+                </div>
+                <div class="row"> 
+                  <button  type="button" class="btn btn-outline-primary col-11 offset-1  mt-1"id="Next">Next</button>
+                </div>
+                <div class="row d-none col-lg-10 mx-auto" id="explanationcontainer">
+                  <div id="explanation">Standarderklärung</div>
+                </div>
+                <div class="row d-none col-lg-10 mx-auto" id="chatcontainer">
+                  <input type="text" class="border border-primary rounded col-10 offset-1 mt-2" placeholder="Chatnachricht eingeben" id="messageInput">
+                  <button type="button" class="btn btn-primary btn-sm col-1 ofset 9 mt-2 ml-2" id="sendbutton">Senden</button>
+                  <div id="chat" placeholder="Chatnachricht"></div>
+                </div>
+              </div>
+              <!-- Ergebnis class d-none wird entfernt um sichtbar zu sein -->
+              <div class="d-none" id="result">
+                <h3>Ergebnis</h3>
+                <div id="resulttext"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>  
+  </div>
+</body>
+</html>

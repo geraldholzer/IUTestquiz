@@ -1,0 +1,19 @@
+{
+    "name": "geri/iu-mind-maze",
+    "autoload": {
+        "psr-4": {
+            "Geri\\IuMindMaze\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Gerald Holzer",
+            "email": "gerald_holzer@gmx.at"
+        }
+    ],
+    "require": {
+        "cboden/ratchet": "^0.4.4",
+        "react/socket": "^1.14",
+        "react/event-loop": "^1.5"
+    }
+}

@@ -78,22 +78,18 @@ function laden(){
 
 //default questions
 
-
-
-
-
 //Eventlistener für next button
 NextButton.addEventListener('click', next)
 //Eventlistener für Startbutton
 StartButton.addEventListener('click', startquiz)
 
 //Hier wird zuerst die laden funktion aufgerufen und anschließend die entsprechenden buttons ein/aus geblendet
- function startquiz() {
+function startquiz() {
     laden();
     StartButton.classList.add('d-none')
     Question.classList.remove('d-none')
     answercontainer.classList.remove('d-none')
-  
+    
 }
 // bei drücken des Next buttons wird die funktion zuweisen aufgerufen auser die fragen sind fertig dan finish
 function next() {
@@ -118,7 +114,7 @@ function shuffleFisherYates(array) {
 function zuweisen() {
     //aufruf mix funktion
     mixedanswers = shuffleFisherYates(questions[questioncounter].answers)
-
+    
     for (let i = 0; i < 4; i++) {
         explanation.innerHTML= questions[questioncounter].explanation;
         Question.innerHTML = questions[questioncounter].questiontext
@@ -142,7 +138,7 @@ function reset() {
     Answerbuttons.forEach((button) => {
         button.disabled = false
     }),
-        (NextButton.disabled = true)
+    (NextButton.disabled = true)
 }
 
 // Ausblenden des answercontainers und einblenden des Ergebnistexts
@@ -154,11 +150,11 @@ function finish() {
     answercontainer.classList.add('d-none')
     resultpage.classList.remove('d-none')
     resuttext.innerHTML =
-        'Du hast ' +
-        pointscounter +
-        ' von ' +
-        questioncounter +
-        ' Fragen richtig beantwortet'
+    'Du hast ' +
+    pointscounter +
+    ' von ' +
+    questioncounter +
+    ' Fragen richtig beantwortet'
     questioncounter = 0
 }
 
@@ -168,23 +164,24 @@ function antworten(e) {
     const selectedbutton = e.target
     let correctchoice = selectedbutton.dataset.correct
     explanationcontainer.classList.remove("d-none");
-
+    
     if (correctchoice === 'true') {
         selectedbutton.classList.remove('btn-outline-primary')
         selectedbutton.classList.add('btn-success')
-
+        
         Answerbuttons.forEach((button) => {
             button.disabled = true
         }),
             //NextButton aktivieren
             (NextButton.disabled = false)
-        pointscounter++
-    } else if (correctchoice === 'false') {
-        selectedbutton.classList.remove('btn-outline-primary')
+            pointscounter++
+        } else if (correctchoice === 'false') {
+            selectedbutton.classList.remove('btn-outline-primary')
         selectedbutton.classList.add('btn-danger')
         Answerbuttons.forEach((button) => {
             button.disabled = true
         }),
-            (NextButton.disabled = false)
+        (NextButton.disabled = false)
     }
 }
+//############ALT#ALT#ALT#ALT#ALT#ALT#ALT#ALT#ALT#ALT#ALT#ALT#ALT#ALT#ALT#ALT#ALT#AL
