@@ -25,7 +25,7 @@ const Answerbuttons = [
 //Array mit den Fragen jede Frage hat ein Array mit Antworten mit attribut correct für die richtige Antwort
 // Wird mit fetch von PHP geholt
 function laden(){
-    fetch("server.php")
+    fetch("question-server.php")
     .then(response => {
         if (!response.ok) {
             throw new Error(`Network response was not ok: ${response.statusText}`);
@@ -41,42 +41,6 @@ function laden(){
         console.error('Fehler beim Abrufen der Daten:', error);
     });
 }
-
-// default questions
-// let questions = [
-//     {
-//         explanation:"a",
-//         questiontext: 'Was ist 3-2',
-//         answers: [
-//             { answer: 'eins', correct: true },
-//             { answer: 'zwei', correct: false },
-//             { answer: 'drei', correct: false },
-//             { answer: 'vier', correct: false },
-//         ],
-//     },
-//     {
-//         questiontext: 'Was ist 1+1',
-//         explanation:"a",
-//         answers: [
-//             { answer: 'zwei', correct: true },
-//             { answer: 'eins', correct: false },
-//             { answer: 'drei', correct: false },
-//             { answer: 'vier', correct: false },
-//         ],
-//     },
-//     {
-//         questiontext: 'Was ist 6/2',
-//         explanation:"a",
-//         answers: [
-//             { answer: 'drei', correct: true },
-//             { answer: 'zwei', correct: false },
-//             { answer: 'eins', correct: false },
-//             { answer: 'vier', correct: false },
-//         ],
-//     },
-// ]
-
-//default questions
 
 //Eventlistener für next button
 NextButton.addEventListener('click', next)
@@ -185,3 +149,38 @@ function antworten(e) {
     }
 }
 //############ALT#ALT#ALT#ALT#ALT#ALT#ALT#ALT#ALT#ALT#ALT#ALT#ALT#ALT#ALT#ALT#ALT#AL
+// default questions
+// let questions = [
+//     {
+//         explanation:"a",
+//         questiontext: 'Was ist 3-2',
+//         answers: [
+//             { answer: 'eins', correct: true },
+//             { answer: 'zwei', correct: false },
+//             { answer: 'drei', correct: false },
+//             { answer: 'vier', correct: false },
+//         ],
+//     },
+//     {
+//         questiontext: 'Was ist 1+1',
+//         explanation:"a",
+//         answers: [
+//             { answer: 'zwei', correct: true },
+//             { answer: 'eins', correct: false },
+//             { answer: 'drei', correct: false },
+//             { answer: 'vier', correct: false },
+//         ],
+//     },
+//     {
+//         questiontext: 'Was ist 6/2',
+//         explanation:"a",
+//         answers: [
+//             { answer: 'drei', correct: true },
+//             { answer: 'zwei', correct: false },
+//             { answer: 'eins', correct: false },
+//             { answer: 'vier', correct: false },
+//         ],
+//     },
+// ]
+
+//default questions

@@ -1,78 +1,155 @@
 <?php
 require 'vendor/autoload.php';
-
+//Ratchet wird für die Websockets benötigt
 use Ratchet\Server\IoServer;
 use Ratchet\Http\HttpServer;
 use Ratchet\WebSocket\WsServer;
-
+use Ratchet\Wamp\WampServerInterface;
 use Ratchet\MessageComponentInterface;
 use Ratchet\ConnectionInterface;
 
-class MyWebSocketServer implements MessageComponentInterface {
+//Websocket server class 
+class MyWebSocketServer implements MessageComponentInterface
+{
     protected $clients;
-
-    public function __construct() {
+    protected $rooms;
+ //Konstruktor
+    public function __construct()
+    {
         $this->clients = new \SplObjectStorage();
+        $this->rooms = [];
     }
 
-    public function onOpen(ConnectionInterface $conn) {
+
+//Bei Anmeldung hinzufügen des clients zur clientliste "clients"
+    public function onOpen(ConnectionInterface $conn)
+    {
         // Connection opened
         echo "New connection! ({$conn->resourceId})\n";
 
-        // Speichere die Verbindung für spätere Verwendung
+        // Client zu clients hinzufügen
         $this->clients->attach($conn);
     }
-
-    public function onMessage(ConnectionInterface $from, $msg) {
-        // Message received
-        echo "$msg\n";
-
-        // Iteriere über alle Clients und sende die Nachricht
-        foreach ($this->clients as $client) {
-            // Sende die Nachricht nicht an den Absender
-            if ($from !== $client) {
-                $client->send($msg);
-            }
-        }
-    }
-
-    public function onClose(ConnectionInterface $conn) {
+    // Bei schließen der Verbindung  
+    public function onClose(ConnectionInterface $conn)
+    {
         // Connection closed
         echo "Connection {$conn->resourceId} has disconnected\n";
 
-        // Entferne die Verbindung aus der Liste
+        // Remove the connection from all rooms
+        foreach ($this->rooms as $room) {
+            $room->detach($conn);
+        }
+
         $this->clients->detach($conn);
     }
 
-    public function onError(ConnectionInterface $conn, \Exception $e) {
+    public function onError(ConnectionInterface $conn, \Exception $e)
+    {
         // Error occurred
         echo "An error occurred: {$e->getMessage()}\n";
 
         // Close the connection
         $conn->close();
     }
+
+   
+    //Hier wird eine Nachricht vom Client ausgewertet
+    public function onMessage(ConnectionInterface $from, $msg)
+    {
+        // Übergebene nachricht in Assoziatives array umwandeln
+        $data = json_decode($msg, true);
+
+        if (!isset($data['type'])) {
+            return; // Invalid message format
+        }
+        
+        switch ($data['type']) {
+            case 'subscribe':
+                $this->handleSubscribe($from, $data['room']);
+                break;
+            case 'message':
+                $this->handleMessage($from, $data['room'], $data['message']);
+                break;
+            // Add more cases for other message types if needed
+        }
+    }
+
+    private function handleSubscribe(ConnectionInterface $conn, $room)
+    {
+        // Create the room if it doesn't exist
+        if (!isset($this->rooms[$room])) {
+            $this->rooms[$room] = new \SplObjectStorage();
+        }
+
+        // Subscribe the client to the room
+        if($this->rooms[$room]->count()<2){
+             $this->rooms[$room]->attach($conn);
+             if($this->rooms[$room]->count()==2){
+                $message="ready";
+               $this->broadcastToRoom($room,$message,$conn);
+             }
+        echo "Client {$conn->resourceId} subscribed to room $room\n";
+        }
+       
+    }
+
+    private function handleMessage(ConnectionInterface $from, $room, $message)
+    {
+  
+
+        // Broadcast the message to all clients in the specified room
+        $this->broadcastToRoom($room, $message, $from);
+    }
+
+    private function broadcastToRoom($room, $message, $exclude)
+    {
+        echo "from:".$exclude->resourceId."\t";
+        echo "Message:".$message."\n";
+        if (!isset($this->rooms[$room])) {
+            return; // Room doesn't exist
+        }
+
+        foreach ($this->rooms[$room] as $client) {
+            // Do not send the message to the sender
+           if($message!=="ready"){
+             if ($exclude !== $client) {
+                $client->send($message);
+                echo "toinexclude:".$client->resourceId."\n";
+            }
+           }else{$client->send($message);
+            echo "toall:".$client->resourceId."\n";
+        }
+           
+            
+        }
+    }
+
+    public function onCall(ConnectionInterface $conn, $id, $topic, array $params)
+    {
+        
+    }
+
+    public function onPublish(ConnectionInterface $conn, $topic, $event, array $exclude, array $eligible)
+    {
+        
+    }
+    // ... (Other MessageComponentInterface methods)
 }
 
-// Setze den WebSocket-Server auf
+// Set up the WebSocket Server
 $server = IoServer::factory(
     new HttpServer(
         new WsServer(
             new MyWebSocketServer()
         )
     ),
-    8080  // Wähle einen Port deiner Wahl
+    8081  // Port wählen
 );
+//Port8081 weil sonst konflikt mit XAMPP
+echo "WebSocket server started at 127.0.0.1:8081\n";
 
-echo "WebSocket server started at 127.0.0.1:8080\n";
-
-// Starte den WebSocket-Server
+// Start the WebSocket Server
 $server->run();
-
-
-
-
-
-
-
-
+?>
 

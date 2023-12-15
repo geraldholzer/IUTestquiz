@@ -44,28 +44,42 @@
   </div>
   <!-- mt steht für margin top -->
   <div class="row mt-5" >
+    <!-- übercontainer -->
     <div class="container">
+      <!-- Reihe in der die card dargestellt werden soll -->
       <div class="row">
+        <!-- Dient zur Zentrierung der Card -->
         <div class="col-lg-8 mx-auto">
           <div class="card">
             <div class="card-body">
-              <button  type="button" class="btn btn-outline-primary col-11 offset-1  mt-1"id="Start">Quiz starten</button>
+              <!-- Button zum starten eines neuen Spiels  die klasse btn-outline-primary ist bootstrap standard col-11 steht für 11 von 12 spalten 
+                und eine spalte offset mt für margin top 1-->
+              <button  type="button" class="btn btn-outline-primary col-11 offset-1  mt-1"id="Joingame">Spiel erstellen oder beitreten</button>
+              <!-- Quizstartbutton -->
+              <button  type="button" class="btn btn-outline-primary col-11 offset-1  mt-1 d-none"id="Start">Quiz starten</button>
+              <!-- Fragetext -->
               <p class="card-text d-none col-10 mx-auto" id="question">Wer bin ich</p>
+              <!-- Antwortcontainer -->
               <div class="container-fluid d-none" id="answercontainer">
+                <!-- Obere Antwortbuttons -->
                 <div class="row"> 
                   <button  type="button" class="btn btn-outline-primary col-5  offset-1" id="Answer1">Primary</button>
                   <button type="button" class="btn btn-outline-primary col-5 offset-1 "id="Answer2">Primary</button>
                 </div>
+                <!-- Untere Antwortbuttons -->
                 <div class="row"> 
                   <button  type="button" class="btn btn-outline-primary col-5 offset-1 mt-1"id="Answer3">Primary</button>
                   <button type="button" class="btn btn-outline-primary col-5 offset-1 mt-1"id="Answer4">Primary</button>
                 </div>
+                <!-- Button zum Weiterschalten -->
                 <div class="row"> 
                   <button  type="button" class="btn btn-outline-primary col-11 offset-1  mt-1"id="Next">Next</button>
                 </div>
+                <!-- Container für die Erklärung -->
                 <div class="row d-none col-lg-10 mx-auto" id="explanationcontainer">
                   <div id="explanation">Standarderklärung</div>
                 </div>
+                <!-- Container für den Chat -->
                 <div class="row d-none col-lg-10 mx-auto" id="chatcontainer">
                   <input type="text" class="border border-primary rounded col-10 offset-1 mt-2" placeholder="Chatnachricht eingeben" id="messageInput">
                   <button type="button" class="btn btn-primary btn-sm col-1 ofset 9 mt-2 ml-2" id="sendbutton">Senden</button>
@@ -76,6 +90,23 @@
               <div class="d-none" id="result">
                 <h3>Ergebnis</h3>
                 <div id="resulttext"></div>
+              </div>
+              <!-- Warteanzeige -->
+              <div class="d-none" id="wait">
+                <h3>Warte auf Gegner.....</h3>
+              </div>
+              <!-- Container für das erstellen eines neuen Spiels oder beitreten zu einem bestehendem-->
+              <div class="row d-none col-lg-10 mx-auto d-none" id="joingamecontainer">
+                <div class="input-group mb-3">
+                  <input type="text" class="form-control" placeholder="Name für das Spiel eingeben"id="gamenameInput">
+                  <div class="input-group-append">
+                    <button class="btn btn-primary" type="button" id="newgamebutton">erstellen</button>
+                  </div>
+                </div>
+              <!-- Liste mit offenen spielen diese werden als buttons in dieses div eingefügt -->
+                <div class="list-group" id="gamelist">
+                </div>
+                <button type="button" class="btn btn-primary btn-sm col-10 offset-1 mt-2" id="joingamebutton">Spiel beitreten</button>
               </div>
             </div>
           </div>
