@@ -11,10 +11,10 @@ class Game {
 }
 
 // Verbindung zur MySQL-Datenbank herstellen
-$servername="localhost";
+$servername="13.49.243.225";
 $username="root";
 $pw="";
-$db="games";
+$db="deine_datenbank";
 $conn= new mysqli($servername,$username,$pw,$db);
 
 // Überprüfen, ob die Verbindung erfolgreich war

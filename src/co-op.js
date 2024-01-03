@@ -28,7 +28,8 @@ let gamesarray = [] // Hier werden die offenen Spiele die aus der Datenbank geho
 let answered = false //Verhindert eine Endlosschleife bei den Answerbuttons
 let ready = false // wird wahr wen sich der zweite Spieler dem spiel anschließt
 let gamenameInput = document.getElementById('gamenameInput') //Eingabefeld für den Spielnamen
-
+let gameserver="http://13.49.243.225/game-server.php" //gameserver ip von aws server
+let questionserver= "http://13.49.243.225/question-server.php"//questionserver ip von aws server
 //Seite für das erstellen oder beitreten zu einem spiel anzeigen
 joinbutton.addEventListener('click', joingamepage)
 //Ausblenden des Spielbeitreten buttons einblenden der Seite mit den Spielen loadGames wird aufgerufen zum laden aus der DB
@@ -45,7 +46,7 @@ function loadGames() {
         gamelist.removeChild(gamelist.lastChild)
     }
     //Mit fetch API wird aus game-server.php die gamelist geholt
-    fetch('game-server.php', {
+    fetch(gameserver, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -83,7 +84,7 @@ function addnewgame() {
     let game = gamenameInput.value
     //Dieser String wird übergeben action und gamename werden im Server abgefragt anschließend wird mit loadGames die liste neu geladen
     ;(actionstring = 'action=addGame&gamename=' + game),
-    fetch('game-server.php', {
+    fetch(gameserver, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -95,7 +96,7 @@ function addnewgame() {
 function deletegame() {
     let game=room;//aktuell ausgewähltes Spiel verwenden
     actionstring = 'action=deleteGame&gamename=' + game
-    fetch('game-server.php', {
+    fetch(gameserver, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -133,7 +134,7 @@ const Answerbuttons = [
 //Array mit den Fragen jede Frage hat ein Array mit Antworten mit attribut correct für die richtige Antwort
 // Wird mit fetch von PHP geholt
 function laden() {
-    fetch('question-server.php')
+    fetch(questionserver)
         .then((response) => {
             if (!response.ok) {
                 throw new Error(
@@ -269,8 +270,8 @@ function antworten(e) {
     }
 }
 // Websocket für Multiplayer//////////////////////////////////////////////////////////////////////////////////
-//Verbindung zu Websocketserver erstellen der PORT 8081 weil ich sonst einen Konflikt mit XAMPP hatte 
-const socket = new WebSocket('ws://127.0.0.1:8081')
+//Verbindung zu Websocketserver erstellen der PORT 8081 weil ich sonst einen Konflikt mit XAMPP hatte  ip adresse von aws
+const socket = new WebSocket('ws://13.49.243.225:8081') 
 
 socket.onopen = (event) => {
     console.log('WebSocket connection opened:', event)

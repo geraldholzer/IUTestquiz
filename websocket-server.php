@@ -96,8 +96,6 @@ class MyWebSocketServer implements MessageComponentInterface
 
     private function handleMessage(ConnectionInterface $from, $room, $message)
     {
-  
-
         // Broadcast the message to all clients in the specified room
         $this->broadcastToRoom($room, $message, $from);
     }
