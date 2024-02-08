@@ -16,7 +16,9 @@ class MyWebSocketServer implements MessageComponentInterface
  //Konstruktor
     public function __construct()
     {
+        // Hier werden alle Verbindungen der Spieler gespeichert
         $this->clients = new \SplObjectStorage();
+        // Hier werden die Spielsitzungen gespeichert in die dann die clients hinzugefügt werden
         $this->rooms = [];
     }
 
@@ -26,7 +28,7 @@ class MyWebSocketServer implements MessageComponentInterface
     {
         // Connection opened
         echo "New connection! ({$conn->resourceId})\n";
-
+        $conn->finishflag= false;
         // Client zu clients hinzufügen
         $this->clients->attach($conn);
     }
@@ -71,23 +73,26 @@ class MyWebSocketServer implements MessageComponentInterface
             case 'message':
                 $this->handleMessage($from, $data['room'], $data['message']);
                 break;
-            // Add more cases for other message types if needed
+            case 'finish':
+                $this->handleFinish($from, $data['room'], $data['message']);
+                break;
         }
     }
-
+    // Hier wird ein Client zu einem Raum gleichbedeutend mit Spielsitzung hinzugefügt
     private function handleSubscribe(ConnectionInterface $conn, $room)
     {
-        // Create the room if it doesn't exist
+        // Raum erstellen falls nicht vorhanden 
         if (!isset($this->rooms[$room])) {
             $this->rooms[$room] = new \SplObjectStorage();
         }
 
-        // Subscribe the client to the room
+        // Client zu Raum hinzufügen mit attach Wenn sich 2 Spieler im Raum befinden wird eine ready message gesendet.
         if($this->rooms[$room]->count()<2){
              $this->rooms[$room]->attach($conn);
+             //Ready message dient dazu das Spiel nach dem Eintreffen beider Spieler zu Starten
              if($this->rooms[$room]->count()==2){
                 $message="ready";
-               $this->broadcastToRoom($room,$message,$conn);
+               $this->broadcastToRoom($room,json_encode(['type' => 'message', 'message' => $message]),null);
              }
         echo "Client {$conn->resourceId} subscribed to room $room\n";
         }
@@ -97,15 +102,36 @@ class MyWebSocketServer implements MessageComponentInterface
     private function handleMessage(ConnectionInterface $from, $room, $message)
     {
         // Broadcast the message to all clients in the specified room
-        $this->broadcastToRoom($room, $message, $from);
+        $this->broadcastToRoom($room, json_encode(['type' => 'message', 'message' => $message]), $from);
     }
 
-    private function broadcastToRoom($room, $message, $exclude)
+    private function handleFinish(ConnectionInterface $from, $room, $message)
     {
-        echo "from:".$exclude->resourceId."\t";
-        echo "Message:".$message."\n";
+        $this->broadcastToRoom($room,  json_encode(['type' => 'finish', 'points' => $message]), $from);
+        
+        $from->finishflag= true;
+
+        $allClientsFinished = true;
+        foreach ($this->rooms[$room] as $client) {
+            if (!isset($client->finishflag) || !$client->finishflag) {
+                $allClientsFinished = false;
+                break;
+            }
+        }
+
+        // Wenn das Flag bei allen Clients gesetzt ist
+        if ($allClientsFinished) {
+           echo "game over";
+            // Sende die 'gameover' Nachricht an alle Clients im Raum
+            $this->broadcastToRoom($room, json_encode(['type' => 'gameover', 'message' =>"gameover"]), null);
+        }
+      
+    }
+    
+    private function broadcastToRoom($room, $message, $exclude)
+    {   
         if (!isset($this->rooms[$room])) {
-            return; // Room doesn't exist
+            return; // Spiel existiert nicht
         }
 
         foreach ($this->rooms[$room] as $client) {
@@ -113,26 +139,12 @@ class MyWebSocketServer implements MessageComponentInterface
            if($message!=="ready"){
              if ($exclude !== $client) {
                 $client->send($message);
-                echo "toinexclude:".$client->resourceId."\n";
             }
-           }else{$client->send($message);
-            echo "toall:".$client->resourceId."\n";
-        }
-           
-            
+           }else{$client->send($message); }
+                    
         }
     }
 
-    public function onCall(ConnectionInterface $conn, $id, $topic, array $params)
-    {
-        
-    }
-
-    public function onPublish(ConnectionInterface $conn, $topic, $event, array $exclude, array $eligible)
-    {
-        
-    }
-    // ... (Other MessageComponentInterface methods)
 }
 
 // Set up the WebSocket Server

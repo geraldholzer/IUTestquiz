@@ -1,4 +1,14 @@
 <?php
+
+if(isset($_POST['action'])){
+    $action=$_POST['action'];
+}
+
+
+if ($action==="fragenladen"){
+fragenAusgeben();
+}
+
 class answer{
     public $answer;
     public $correct;
@@ -10,6 +20,7 @@ class answer{
 }
 
 class question{
+    public $questionid;
     public $questiontext;
     public $explanation;
     public $answers;
@@ -22,14 +33,9 @@ class question{
     }
     
 }
-$question1= new question("Welches Land liegt in Europa","Die Anderen Länder liegen in Amerika",array(
-    new answer("Frankreich",true,),
-    new answer("Argentinien",false),
-    new answer("Brasilien",false),
-    new answer("USA",false),
-));
-$question1->explanation = "test";
 
+
+function fragenAusgeben() {
 $questions= array(
     new question("Welches Land liegt in Europa","Die Anderen Länder liegen in Amerika",array(
         new answer("Frankreich",true,),
@@ -51,9 +57,13 @@ $questions= array(
 
     ));
 
+    
+        $myJSON = json_encode($questions);
+    
+        echo $myJSON;
+    }
 
+// $myJSON = json_encode($questions);
 
-$myJSON = json_encode($questions);
-
-echo $myJSON;
+// echo $myJSON;
 ?>

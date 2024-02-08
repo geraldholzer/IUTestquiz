@@ -28,8 +28,14 @@ let gamesarray = [] // Hier werden die offenen Spiele die aus der Datenbank geho
 let answered = false //Verhindert eine Endlosschleife bei den Answerbuttons
 let ready = false // wird wahr wen sich der zweite Spieler dem spiel anschließt
 let gamenameInput = document.getElementById('gamenameInput') //Eingabefeld für den Spielnamen
-let gameserver="http://13.49.243.225/game-server.php" //gameserver ip von aws server
-let questionserver= "http://13.49.243.225/question-server.php"//questionserver ip von aws server
+//let gameserver="http://13.49.243.225/game-server.php" //gameserver ip von aws server
+let gameserver="game-server.php"// lokaler gameserver
+//let questionserver= "http://13.49.243.225/question-server.php"//questionserver ip von aws server
+let questionserver= "question-server.php"// lokaler question server
+//let websocketserver="ws://13.49.243.225:8081"//websocket server auf aws server 
+let websocketserver="ws://127.0.0.1:8081" // lokaler websocketserver
+
+
 //Seite für das erstellen oder beitreten zu einem spiel anzeigen
 joinbutton.addEventListener('click', joingamepage)
 //Ausblenden des Spielbeitreten buttons einblenden der Seite mit den Spielen loadGames wird aufgerufen zum laden aus der DB
@@ -82,6 +88,12 @@ newgamebutton.addEventListener('click', addnewgame)
 //Hier wird wieder die fetch API genutzt 
 function addnewgame() {
     let game = gamenameInput.value
+    let vorhanden = gamesarray.find(function(spiel){
+        return game == spiel.name;
+    })
+    if(vorhanden){
+        alert("Spiel bereits vorhanden neuen Namen wählen")
+    }else{ 
     //Dieser String wird übergeben action und gamename werden im Server abgefragt anschließend wird mit loadGames die liste neu geladen
     ;(actionstring = 'action=addGame&gamename=' + game),
     fetch(gameserver, {
@@ -91,6 +103,7 @@ function addnewgame() {
         },
         body: actionstring,
     }).then(loadGames)
+}
 }
 //Funktioniert ähnlich wie die addnewgame Funktion nur das hier deletegame übergeben wird
 function deletegame() {
@@ -104,6 +117,8 @@ function deletegame() {
         body: actionstring,
     }).then(loadGames)
 }
+
+
 //Einlesen welches Spiel aus der Liste gewählt wurde Room weil die Sitzung als Websocket raum ausgeführt ist
 function roomselect(e) {
     let selectedgame = e.target
@@ -116,7 +131,6 @@ function roomselect(e) {
 
 //Mit dieser function wird der benutzer zum entsprechenden raum hinzugefügt mit subsribeToRoom und Warteseite eingeblendet
 function joingame() {
-
     subscribeToRoom(room)
     joingamecontainer.classList.add('d-none')
     joinbutton.classList.add('d-none')
@@ -134,8 +148,14 @@ const Answerbuttons = [
 //Array mit den Fragen jede Frage hat ein Array mit Antworten mit attribut correct für die richtige Antwort
 // Wird mit fetch von PHP geholt
 function laden() {
-    fetch(questionserver)
-        .then((response) => {
+  fetch(questionserver, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        //diese action wird im server abgefragt
+        body: 'action=fragenladen',
+    }).then((response) => {
             if (!response.ok) {
                 throw new Error(
                     `Network response was not ok: ${response.statusText}`
@@ -160,10 +180,11 @@ StartButton.addEventListener('click', startquiz)
 
 //Hier wird zuerst die laden funktion aufgerufen und anschließend die entsprechenden buttons ein/aus geblendet
 function startquiz() {
-    laden()
+    laden();
     StartButton.classList.add('d-none')
     Question.classList.remove('d-none')
     answercontainer.classList.remove('d-none')
+    waitforopponent.classList.add("d-none")
     chatcontainer.classList.remove('d-none')
 }
 // bei drücken des Next buttons wird die funktion zuweisen aufgerufen  oder die Fragen sind fertig -> finish
@@ -271,7 +292,7 @@ function antworten(e) {
 }
 // Websocket für Multiplayer//////////////////////////////////////////////////////////////////////////////////
 //Verbindung zu Websocketserver erstellen der PORT 8081 weil ich sonst einen Konflikt mit XAMPP hatte  ip adresse von aws
-const socket = new WebSocket('ws://13.49.243.225:8081') 
+const socket = new WebSocket(websocketserver) 
 
 socket.onopen = (event) => {
     console.log('WebSocket connection opened:', event)
@@ -281,44 +302,44 @@ socket.onopen = (event) => {
 let buttonpressed = false
 // Hier wird eine Nachricht vom Server ausgewertet
 socket.onmessage = (event) => {
-    message = event.data
+    const data = JSON.parse(event.data)
     //Nextfunktion aufrufen wenn Mitspieler Next gedrückt hat
-    if (event.data == 'nextbuttonclick') {
+    if (data.message== 'nextbuttonclick') {
         next()
     } 
     //Sobald vom Mitspieler ein Answerbutton gedrückt wurde kommt die entsprechende Message
     //Hier wird dann mit dispatch event das click Event des eigenen Buttons simuliert 
     //So wird immer bei beiden Clients der Button gedrückt
-    else if (event.data == 'Answerbutton1clicked') {
+    else if (data.message == 'Answerbutton1clicked') {
         if (!buttonpressed) {
             const clickEvent = new Event('click')
             buttonpressed = true
             Answerbuttons[0].dispatchEvent(clickEvent)
         }
-    } else if (event.data == 'Answerbutton2clicked') {
+    } else if (data.message == 'Answerbutton2clicked') {
         if (!buttonpressed) {
             const clickEvent = new Event('click')
             buttonpressed = true
             Answerbuttons[1].dispatchEvent(clickEvent)
         }
-    } else if (event.data == 'Answerbutton3clicked') {
+    } else if (data.message == 'Answerbutton3clicked') {
         if (!buttonpressed) {
             const clickEvent = new Event('click')
             buttonpressed = true
             Answerbuttons[2].dispatchEvent(clickEvent)
         }
-    } else if (event.data == 'Answerbutton4clicked') {
+    } else if (data.message == 'Answerbutton4clicked') {
         if (!buttonpressed) {
             const clickEvent = new Event('click')
             buttonpressed = true
             Answerbuttons[3].dispatchEvent(clickEvent)
         }
         //Wenn zwei Spieler verbunden sind wird das Spiel gestartet der Server sendet hierzu "ready"
-    } else if (event.data == 'ready') {
+    } else if (data.message == 'ready') {
         startquiz();
         deletegame();
     } else {
-        chat.innerHTML += event.data + '</br>'
+        chat.innerHTML += data.message + '</br>'
     }
 }
 

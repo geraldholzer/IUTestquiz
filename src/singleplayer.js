@@ -13,8 +13,8 @@ let resultpage = document.getElementById('result')
 let resuttext = document.getElementById('resulttext')
 let explanation=document.getElementById("explanation")
 let explanationcontainer=document.getElementById("explanationcontainer")
-let questionserver= "http://13.49.243.225/question-server.php"
-
+//let questionserver= "http://13.49.243.225/question-server.php"// aws ip question-server
+let questionserver= "question-server.php"// lokaler question server
 //Buttons in Array verwalten
 const Answerbuttons = [
     AnswerButton1,
@@ -26,7 +26,15 @@ const Answerbuttons = [
 //Array mit den Fragen jede Frage hat ein Array mit Antworten mit attribut correct für die richtige Antwort
 // Wird mit fetch von PHP geholt
 function laden(){
-    fetch(questionserver)
+    fetch(questionserver,{
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        //diese action wird im server abgefragt
+        body: 'action=fragenladen',
+
+    })
     .then(response => {
         if (!response.ok) {
             throw new Error(`Network response was not ok: ${response.statusText}`);

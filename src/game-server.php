@@ -11,15 +11,15 @@ class Game {
 }
 
 // Verbindung zur MySQL-Datenbank herstellen
-$servername="13.49.243.225";
+$servername="localhost";
 $username="root";
 $pw="";
-$db="deine_datenbank";
+$db="games";
 $conn= new mysqli($servername,$username,$pw,$db);
 
 // Überprüfen, ob die Verbindung erfolgreich war
 if ($conn->connect_error) {
-    die("Verbindung fehlgeschlagen: " . $conn->connect_error);
+   echo("Verbindung fehlgeschlagen: " . $conn->connect_error);
 }
 $action = $_POST['action'];
 
